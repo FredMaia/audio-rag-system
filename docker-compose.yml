@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  whisper-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: whisper-service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./whisper_service.py:/app/whisper_service.py
