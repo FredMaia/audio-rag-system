@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio RAG System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de RAG via áudio</h1>
+        <p class="subtitle">Sistema inteligente de áudio e documentos focado em cafeicultura</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="audio">
+                Processar Áudio
+            </button>
+            <button class="tab-btn" data-tab="document">
+                Adicionar documentos
+            </button>
+        </div>
+
+        <div class="tab-content active" id="audio-tab">
+            <h2>Enviar Áudio para Processamento</h2>
+            
+            <div class="upload-area" id="audioUploadArea">
+                <p>Clique ou arraste um arquivo de áudio aqui</p>
+                <p>
+                    Formatos suportados: MP3, WAV, M4A, OGG
+                </p>
+            </div>
+
+            <input type="file" id="audioFileInput" accept="audio/*">
+            
+            <div class="file-info" id="audioFileInfo">
+                <strong>Arquivo selecionado:</strong> <span id="audioFileName"></span>
+            </div>
+
+            <button class="btn-primary" id="processAudioBtn" disabled>
+                Processar Áudio
+            </button>
+
+            <div class="loading" id="audioLoading">
+                <div class="spinner"></div>
+                <p>Processando áudio</p>
+            </div>
+
+            <div class="result" id="audioResult">
+                <div class="result-section">
+                    <div class="result-title">Transcrição:</div>
+                    <div class="result-content" id="transcription"></div>
+                </div>
+                <div class="result-section">
+                    <div class="result-title">Resposta:</div>
+                    <div class="result-content" id="answer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Documentos -->
+        <div class="tab-content" id="document-tab">
+            <h2>Adicionar Documentos à Base de Conhecimento</h2>
+            
+            <div class="upload-area" id="pdfUploadArea">
+                <p>Clique ou arraste um arquivo PDF aqui</p>
+                <p class="upload-hint">
+                    Formato suportado: PDF
+                </p>
+            </div>
+
+            <input type="file" id="pdfFileInput" accept=".pdf">
+            
+            <div class="file-info" id="pdfFileInfo">
+                <strong>Arquivo selecionado:</strong> <span id="pdfFileName"></span>
+            </div>
+
+            <button class="btn-primary" id="uploadPdfBtn" disabled>
+                Adicionar à Base de Conhecimento
+            </button>
+
+            <div class="loading" id="pdfLoading">
+                <div class="spinner"></div>
+                <p>Processando PDF e gerando embeddings...</p>
+            </div>
+
+            <div class="result" id="pdfResult"></div>
+
+            <div class="stats-section" id="statsSection">
+                <h3>Estatísticas da Base de Conhecimento</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalDocs">-</div>
+                        <div class="stat-label">Documentos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="embeddingDim">-</div>
+                        <div class="stat-label">Dimensão</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="modelName">-</div>
+                        <div class="stat-label">Modelo</div>
+                    </div>
+                </div>
+                <button class="btn-refresh" id="refreshStatsBtn">
+                    Atualizar Estatísticas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
