@@ -21,7 +21,6 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     max-width: 700px;
     width: 100%;
-    animation: fadeIn 0.5s ease-in;
 }
 
 h1 {
@@ -83,11 +82,42 @@ h3 {
 
 .tab-content {
     display: none;
-    animation: fadeIn 0.3s ease-in;
 }
 
 .tab-content.active {
     display: block;
+}
+
+/* Audio Mode Selector */
+.audio-mode-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 12px 20px;
+    background: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    color: #666;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.mode-btn:hover {
+    background: #e0e0e0;
+    border-color: #094f19;
+    color: #094f19;
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, #032711 0%, #027a0c 100%);
+    border-color: #094f19;
+    color: white;
 }
 
 /* Upload Area */
@@ -123,7 +153,6 @@ input[type="file"] {
     background: #f0f0f0;
     border-radius: 8px;
     display: none;
-    animation: slideIn 0.3s ease-out;
 }
 
 /* Buttons */
@@ -200,7 +229,6 @@ input[type="file"] {
 .result {
     display: none;
     margin-top: 30px;
-    animation: fadeIn 0.5s ease-in;
 }
 
 .result-section {
@@ -290,4 +318,149 @@ input[type="file"] {
     color: #666;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+/* Microphone Area */
+.microphone-area {
+    border: 3px solid #094f19;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f5e9 100%);
+}
+
+.mic-icon {
+    font-size: 80px;
+    margin-bottom: 15px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+#micStatus {
+    font-size: 18px;
+    font-weight: bold;
+    color: #094f19;
+    margin-bottom: 5px;
+}
+
+.mic-hint {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Audio Visualizer */
+.audio-visualizer {
+    display: none;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    height: 80px;
+    margin: 20px 0;
+}
+
+.visualizer-bar {
+    width: 10px;
+    background: linear-gradient(to top, #094f19, #027a0c);
+    border-radius: 5px;
+    transition: height 0.1s ease;
+    height: 20%;
+}
+
+.recording-timer {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff0000;
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+/* Recording Controls */
+.recording-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn-record, .btn-stop {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-record {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: white;
+}
+
+.btn-record:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+}
+
+.btn-stop {
+    background: linear-gradient(135deg, #666 0%, #333 100%);
+    color: white;
+}
+
+.btn-stop:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 102, 102, 0.4);
+}
+
+.btn-record:disabled, .btn-stop:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Audio Preview */
+.audio-preview {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.audio-preview p {
+    margin-bottom: 10px;
+    color: #094f19;
+}
+
+.audio-preview audio {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }

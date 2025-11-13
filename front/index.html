@@ -23,22 +23,69 @@
         <div class="tab-content active" id="audio-tab">
             <h2>Enviar Áudio para Processamento</h2>
             
-            <div class="upload-area" id="audioUploadArea">
-                <p>Clique ou arraste um arquivo de áudio aqui</p>
-                <p>
-                    Formatos suportados: MP3, WAV, M4A, OGG
-                </p>
+            <!-- Alternância entre Upload e Microfone -->
+            <div class="audio-mode-selector">
+                <button class="mode-btn active" id="uploadModeBtn">
+                    📁 Upload de Arquivo
+                </button>
+                <button class="mode-btn" id="microphoneModeBtn">
+                    🎤 Gravar Microfone
+                </button>
             </div>
 
-            <input type="file" id="audioFileInput" accept="audio/*">
-            
-            <div class="file-info" id="audioFileInfo">
-                <strong>Arquivo selecionado:</strong> <span id="audioFileName"></span>
+            <!-- Modo Upload -->
+            <div class="audio-mode" id="uploadMode">
+                <div class="upload-area" id="audioUploadArea">
+                    <p>Clique ou arraste um arquivo de áudio aqui</p>
+                    <p>
+                        Formatos suportados: MP3, WAV, M4A, OGG
+                    </p>
+                </div>
+
+                <input type="file" id="audioFileInput" accept="audio/*">
+                
+                <div class="file-info" id="audioFileInfo">
+                    <strong>Arquivo selecionado:</strong> <span id="audioFileName"></span>
+                </div>
+
+                <button class="btn-primary" id="processAudioBtn" disabled>
+                    Processar Áudio
+                </button>
             </div>
 
-            <button class="btn-primary" id="processAudioBtn" disabled>
-                Processar Áudio
-            </button>
+            <!-- Modo Microfone -->
+            <div class="audio-mode" id="microphoneMode" style="display: none;">
+                <div class="microphone-area">
+                    <div class="mic-icon" id="micIcon">🎤</div>
+                    <p id="micStatus">Pronto para gravar</p>
+                    <p class="mic-hint">Clique no botão abaixo para começar a gravar</p>
+                    <div class="audio-visualizer" id="audioVisualizer">
+                        <div class="visualizer-bar"></div>
+                        <div class="visualizer-bar"></div>
+                        <div class="visualizer-bar"></div>
+                        <div class="visualizer-bar"></div>
+                        <div class="visualizer-bar"></div>
+                    </div>
+                    <div class="recording-timer" id="recordingTimer">00:00</div>
+                </div>
+
+                <div class="recording-controls">
+                    <button class="btn-record" id="startRecordBtn">
+                        🔴 Iniciar Gravação
+                    </button>
+                    <button class="btn-stop" id="stopRecordBtn" disabled>
+                        ⏹️ Parar Gravação
+                    </button>
+                </div>
+
+                <div class="audio-preview" id="audioPreview" style="display: none;">
+                    <p><strong>Áudio gravado:</strong></p>
+                    <audio controls id="audioPlayback"></audio>
+                    <button class="btn-primary" id="processRecordedBtn">
+                        Processar Áudio Gravado
+                    </button>
+                </div>
+            </div>
 
             <div class="loading" id="audioLoading">
                 <div class="spinner"></div>
