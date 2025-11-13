@@ -15,7 +15,7 @@ A solução permite o envio de um áudio, sua transcrição automática e o proc
 
 ## Arquitetura do Sistema
 
-O sistema é composto por três microsserviços principais, orquestrados via **Docker Compose**:
+O sistema é composto por três microsserviços principais :
 
 ![Arquitetura](./arq.png)
 
@@ -91,10 +91,21 @@ audio-rag-system/
 ```bash
 git clone https://github.com/FredMaia/audio-rag-system.git
 cd audio-rag-system
-docker-compose up --build
+```
+Para subir o docker utilize :
+
+```bash
+./deploy_docker.bat
 ```
 
-> :warning: **Aviso:** É necessário ter Docker instalado na máquina e uma chave de API da GROQ no arquivo **.env**
+Para rodar o projeto completo utilize :
+
+```bash
+./start_project.bat
+```
+
+
+> **Aviso:** É necessário ter Docker instalado na máquina e uma chave de API da GROQ no arquivo **.env**
 
 
 ---
