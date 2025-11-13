@@ -37,14 +37,12 @@ if not GROQ_API_KEY:
 client = Groq(api_key=GROQ_API_KEY)
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
-chroma_client = chromadb.Client(Settings(
-    persist_directory="./chroma_db",
-    anonymized_telemetry=False
-))
+# Usa PersistentClient para garantir que os dados sejam salvos no disco
+chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
 try:
     collection = chroma_client.get_collection("knowledge_base")
-    logging.info("Coleção existente carregada")
+    logging.info(f"Coleção existente carregada com {collection.count()} documentos")
 except:
     collection = chroma_client.create_collection(
         name="knowledge_base",
