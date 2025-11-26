@@ -10,9 +10,9 @@ app = FastAPI(title="API Gateway")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins="http://127.0.0.1:5500",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -32,6 +32,15 @@ async def process_audio(file: UploadFile = File(...)):
         # 1. Enviar áudio para o serviço Whisper
         audio_content = await file.read()
         
+        MAX_FILE_SIZE = 0.25 * 1024 * 1024
+        print(f"Arquivo de áudio de tamanho {len(audio_content)}")
+
+        if len(audio_content) > MAX_FILE_SIZE:
+           raise HTTPException(
+               status_code=413,
+               detail=f"Arquivo muito grande. Máximo: {MAX_FILE_SIZE / (1024*1024)}MB"
+           )
+
         async with httpx.AsyncClient(timeout=300.0) as client:
             # Transcrição
             files = {"file": (file.filename, audio_content, file.content_type)}
