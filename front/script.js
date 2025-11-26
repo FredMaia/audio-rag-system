@@ -1,6 +1,12 @@
 const AUDIO_SERVICE_URL = 'http://localhost:8000';
 const RAG_SERVICE_URL = 'http://localhost:8002';
 
+// Controle de requisições para evitar loops infinitos
+let isLoadingStats = false;
+let lastStatsLoadTime = 0;
+const STATS_LOAD_COOLDOWN = 2000; // 2 segundos de cooldown
+let isUploadingData = false; // Flag para indicar que há upload em andamento entre carregamentos
+
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 
@@ -14,8 +20,9 @@ tabBtns.forEach(btn => {
         btn.classList.add('active');
         document.getElementById(`${targetTab}-tab`).classList.add('active');
         
-        if (targetTab === 'document') {
-            loadStats();
+        // Carrega estatísticas apenas ao trocar para aba de documentos
+        if (targetTab === 'document' && !isLoadingStats) {
+            setTimeout(() => loadStats(), 300); // Pequeno delay para evitar múltiplas chamadas
         }
     });
 });
@@ -322,6 +329,7 @@ uploadPdfBtn.addEventListener('click', async () => {
     uploadPdfBtn.disabled = true;
     pdfLoading.style.display = 'block';
     pdfResult.style.display = 'none';
+    isUploadingData = true; // Marca que está fazendo upload
 
     const formData = new FormData();
     formData.append('file', selectedPdfFile);
@@ -336,16 +344,23 @@ uploadPdfBtn.addEventListener('click', async () => {
 
         if (response.ok) {
             showPdfSuccess(data);
-            loadStats(); // Atualiza estatísticas
             
             selectedPdfFile = null;
             pdfFileInfo.style.display = 'none';
             pdfFileInput.value = '';
+            
+            // Aguarda mais tempo após upload para DB sincronizar
+            setTimeout(() => {
+                isUploadingData = false;
+                loadStats();
+            }, 2000); // 2 segundos de delay
         } else {
             showPdfError(data.detail || 'Erro ao processar PDF');
+            isUploadingData = false;
         }
     } catch (error) {
         showPdfError('Erro de conexão com o serviço RAG: ' + error.message);
+        isUploadingData = false;
     } finally {
         pdfLoading.style.display = 'none';
         uploadPdfBtn.disabled = false;
@@ -380,21 +395,85 @@ function showPdfError(message) {
 
 // ==================== ESTATÍSTICAS ====================
 async function loadStats() {
-    try {
-        const response = await fetch(`${RAG_SERVICE_URL}/stats`);
-        const data = await response.json();
-
-        document.getElementById('totalDocs').textContent = data.total_documents;
-        document.getElementById('embeddingDim').textContent = data.embedding_dimension;
-        document.getElementById('modelName').textContent = data.model;
-    } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
-        document.getElementById('totalDocs').textContent = 'Erro';
-        document.getElementById('embeddingDim').textContent = 'Erro';
-        document.getElementById('modelName').textContent = 'Erro';
+    // Previne carregamentos múltiplos simultâneos
+    const now = Date.now();
+    if (isLoadingStats || (now - lastStatsLoadTime) < STATS_LOAD_COOLDOWN) {
+        console.log('Carregamento de estatísticas bloqueado por cooldown');
+        return;
     }
+    
+    // Não carrega estatísticas durante upload para evitar conflitos
+    if (isUploadingData) {
+        console.log('Carregamento de estatísticas bloqueado: upload em andamento');
+        return;
+    }
+    
+    isLoadingStats = true;
+    lastStatsLoadTime = now;
+    
+    let retries = 0;
+    const maxRetries = 2;
+    
+    while (retries <= maxRetries) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout de 5 segundos
+            
+            const response = await fetch(`${RAG_SERVICE_URL}/stats`, {
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+
+            document.getElementById('totalDocs').textContent = data.total_documents || '0';
+            document.getElementById('embeddingDim').textContent = data.embedding_dimension || '-';
+            document.getElementById('modelName').textContent = data.model || '-';
+            
+            // Sucesso, sai do loop
+            break;
+            
+        } catch (error) {
+            retries++;
+            
+            if (retries > maxRetries) {
+                // Última tentativa falhou
+                if (error.name === 'AbortError') {
+                    console.error('Timeout ao carregar estatísticas após ' + maxRetries + ' tentativas');
+                } else {
+                    console.error('Erro ao carregar estatísticas após ' + maxRetries + ' tentativas:', error);
+                }
+                document.getElementById('totalDocs').textContent = '-';
+                document.getElementById('embeddingDim').textContent = '-';
+                document.getElementById('modelName').textContent = '-';
+            } else {
+                // Aguarda antes de tentar novamente (backoff exponencial)
+                const backoffTime = Math.pow(2, retries) * 500; // 500ms, 1000ms
+                console.log(`Tentativa ${retries} falhou, aguardando ${backoffTime}ms antes de retry...`);
+                await new Promise(resolve => setTimeout(resolve, backoffTime));
+            }
+        }
+    }
+    
+    isLoadingStats = false;
 }
 
-refreshStatsBtn.addEventListener('click', loadStats);
+refreshStatsBtn.addEventListener('click', () => {
+    if (!isLoadingStats) {
+        loadStats();
+    }
+});
 
-loadStats();
+// Carrega estatísticas apenas quando a página estiver completamente carregada
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(loadStats, 500); // Aguarda 500ms antes de carregar
+    });
+} else {
+    setTimeout(loadStats, 500); // Aguarda 500ms antes de carregar
+}
