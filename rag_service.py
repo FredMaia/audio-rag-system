@@ -110,7 +110,13 @@ async def upload_pdf(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Apenas arquivos PDF são aceitos")
         
         contents = await file.read()
+
+        size = len(contents)
+        if(size/(1024*1024) > 25):
+            raise HTTPException(status_code=400, detail="Arquivo PDF muito grande. O tamanho máximo permitido é 25MB")
+
         pdf_reader = PyPDF2.PdfReader(io.BytesIO(contents))
+
         total_pages = len(pdf_reader.pages)
         
         extracted_text = []
