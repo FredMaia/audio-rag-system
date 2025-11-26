@@ -32,7 +32,7 @@ async def process_audio(file: UploadFile = File(...)):
         # 1. Enviar áudio para o serviço Whisper
         audio_content = await file.read()
         
-        MAX_FILE_SIZE = 0.25 * 1024 * 1024
+        MAX_FILE_SIZE = 25 * 1024 * 1024
         print(f"Arquivo de áudio de tamanho {len(audio_content)}")
 
         if len(audio_content) > MAX_FILE_SIZE:
