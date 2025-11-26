@@ -1,3 +1,8 @@
+<h1 align="center">
+  RAGPRESSO
+</h1>
+
+
 ## Visão Geral
 Este projeto desenvolve um sistema inteligente de consulta por áudio voltado para a **cafeicultura brasileira**, integrando transcrição automática **(Whisper)** com geração de respostas contextuais **(RAG)** através de uma arquitetura distribuída de microsserviços. O sistema permite que produtores rurais façam perguntas técnicas por meio de áudio durante suas atividades de campo, recebendo respostas especializadas baseadas em uma base de conhecimento cafeeiro.
 
